@@ -1,5 +1,4 @@
 # Th3_TerrainBuilderUtils
-
 This tool allows you to import your Terrain Builder object files (.txt) into Enfusion with the help of an integrated mapping table you will have to map objects from TB to Enfusions prefabs.
 
 Using the same mapping table you can also export from Enfusion to Terrain Builder format.
@@ -9,3 +8,14 @@ One bug atm is that the UI table will not update when importing the mapping tabl
 
 WARNING
 This tool in its very early stage, to be sure not to break or loose your current progress make a copy of your map or create sub scene and test it there first.
+
+## Installation
+You can just launch the game and download it from the Workshop and add it as a dependency to your project. 
+
+Here is the GUID to add it to existing projects (you need to download first) 
+```
+GUID
+5968EDE2531518AF
+```
+
+
