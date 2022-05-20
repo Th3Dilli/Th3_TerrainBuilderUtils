@@ -18,4 +18,22 @@ GUID
 5968EDE2531518AF
 ```
 
+# Usage
+1. Download the mod from workshop and add it as dependency
+2. Open World Editor and look for the following tool icon
+
+![](screenshots\dragndrop.png)
+
+
+3. Add your `objectx.txt` file to the Workbench project so it can be selected from the file chooser.
+4. Adjust the parameters to your map
+5. Create mappings for your objects - click on the + next to `TB To Enfusion`
+    - AR Prfeb - choose a prefeb to replace a TB object
+    - TB Name - this is the name of your object from the Terrain Builder Template Library
+6. Export your mapping file to be used later aswell
+    - You can later import the mappings again 
+    - NOTE: currently the UI for the mapping will not update when you import a mapping file so check with `Print Mapping` if the correct one is loaded -> it prints to the `Log Console`
+7. Import your objects 
+    - Objects will be imported into current active layer 
+
 
