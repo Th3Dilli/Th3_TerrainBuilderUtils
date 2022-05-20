@@ -22,7 +22,7 @@ GUID
 1. Download the mod from workshop and add it as dependency
 2. Open World Editor and look for the following tool icon
 
-![](screenshots\dragndrop.png)
+![](screenshots/dragndrop.png)
 
 
 3. Add your `objectx.txt` file to the Workbench project so it can be selected from the file chooser.
