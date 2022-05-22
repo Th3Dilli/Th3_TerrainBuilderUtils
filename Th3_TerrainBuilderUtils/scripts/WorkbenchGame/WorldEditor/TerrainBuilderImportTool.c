@@ -10,6 +10,9 @@ class TerrainBuilderImportTool: WorldEditorTool
 	[Attribute("true", UIWidgets.CheckBox, "Use realtive height else absolute")]
 	bool useRelative;
 
+	[Attribute("true", UIWidgets.CheckBox, "Only Export active layer")]
+	bool exportOnlyActiveLayer;
+
 	[Attribute("200000", UIWidgets.SpinBox, "This is the easting of the map in Terrain Builder")]
 	float easting;
 
@@ -145,7 +148,7 @@ class TerrainBuilderImportTool: WorldEditorTool
 		int activeLayerID = m_API.GetCurrentEntityLayerId();
 		while (src)
 		{
-			if(src.GetLayerID() != activeLayerID )
+			if(exportOnlyActiveLayer && src.GetLayerID() != activeLayerID)
 			{
 				src = iter.GetNext();
 				progress.SetProgress(iter.GetCurrentIdx() / approximateCount);
