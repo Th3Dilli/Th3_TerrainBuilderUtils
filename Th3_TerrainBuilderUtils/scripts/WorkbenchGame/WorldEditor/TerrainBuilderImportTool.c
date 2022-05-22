@@ -7,7 +7,7 @@ class TerrainBuilderImportTool: WorldEditorTool
 	[Attribute("", UIWidgets.ResourceNamePicker, "A file that stores mappings between Arma Reforger and Terrain Builder", "txt")]
 	ResourceName MappingFile;
 
-	[Attribute("true", UIWidgets.CheckBox, "Use realtive height else absolute")]
+	[Attribute("false", UIWidgets.CheckBox, "Use realtive height else absolute")]
 	bool useRelative;
 
 	[Attribute("true", UIWidgets.CheckBox, "Only Export active layer")]
@@ -81,14 +81,15 @@ class TerrainBuilderImportTool: WorldEditorTool
 
 				vector pos = {tokens[2].ToFloat(),tokens[14].ToFloat(),tokens[4].ToFloat()};
 				vector angles = {tokens[8].ToFloat(),tokens[6].ToFloat(),tokens[10].ToFloat()};
-				pos[0] = pos[0] - easting;
-				pos[2] = pos[2] - northing;
 				float scale = tokens[12].ToFloat();
 
 				if (useRelative)
 				{
-					pos[1] = pos[1] - m_API.GetTerrainSurfaceY(pos[0], pos[2]);
+					pos[1] = pos[1] + m_API.GetTerrainSurfaceY(pos[0], pos[2]);
 				}
+				
+				pos[0] = pos[0] - easting;
+				pos[2] = pos[2] - northing;
 
 				IEntity ent = m_API.CreateEntity(resourceHash, "", m_API.GetCurrentEntityLayerId(), null, pos, angles);
 				if (ent == null)
@@ -184,13 +185,14 @@ class TerrainBuilderImportTool: WorldEditorTool
 				vector mat[4];
 				entity.GetTransform(mat);
 				vector pos = mat[3];
-				pos[0] = pos[0] + easting;
-				pos[2] = pos[2] + northing;
 				
 				if (useRelative)
 				{
 					pos[1] = pos[1] - m_API.GetTerrainSurfaceY(pos[0], pos[2]);
 				}
+				
+				pos[0] = pos[0] + easting;
+				pos[2] = pos[2] + northing;
 	
 				// 		0 		1		2			3 		4 		 5 		6 		  7 	8 		 9 		10 		11 		12 	  13	14
 				// {'1_ruins',';','208209.546875',';','1733.600708',';','307.892517',';','0.000000',';','0.000000',';','1.000000',';','10.198336',';'}
@@ -223,7 +225,6 @@ class TerrainBuilderImportTool: WorldEditorTool
 		}
 		TBToEnfusion.Clear();
 		
-		Print("Importing Mapping...");
 		array<string> tokens = new array<string>();
 		for (int i = 0; true; ++i)
 		{
@@ -237,7 +238,6 @@ class TerrainBuilderImportTool: WorldEditorTool
 			}
 			TBToEnfusionMapping m = new TBToEnfusionMapping();
 			m.Init(tokens[0], tokens[1]);
-			Print(tokens[0]+" : "+ tokens[1]);
 			TBToEnfusion.Insert(m);
 		}
 		Print("Mapping Imported");
@@ -246,7 +246,6 @@ class TerrainBuilderImportTool: WorldEditorTool
 	[ButtonAttribute("Export mapping")]
 	void ExportMapping()
 	{
-		Print("Exporting Mapping...");
 		string exportPath = MappingFile.GetPath();
 		FileHandle file = FileIO.OpenFile(exportPath , FileMode.WRITE);
 		if (!file)
@@ -256,7 +255,6 @@ class TerrainBuilderImportTool: WorldEditorTool
 		}
 		foreach(TBToEnfusionMapping m : TBToEnfusion)
 		{
-			Print(m.TB_name + " : " + m.AR_Prefab);
 			file.FPrintln("\""+m.TB_name + "\" \"" + m.AR_Prefab +"\"");
 		}
 		if (file)
