@@ -142,8 +142,15 @@ class TerrainBuilderImportTool: WorldEditorTool
 		WBProgressDialog progress = new WBProgressDialog("Exporting...", we);
 		
 		IEntitySource src = iter.GetNext();
+		int activeLayerID = m_API.GetCurrentEntityLayerId();
 		while (src)
 		{
+			if(src.GetLayerID() != activeLayerID )
+			{
+				src = iter.GetNext();
+				progress.SetProgress(iter.GetCurrentIdx() / approximateCount);
+				continue;
+			}
 			IEntity entity = m_API.SourceToEntity(src);
 			
 			ResourceName res = entity.GetPrefabData().GetPrefab().GetResourceName();
