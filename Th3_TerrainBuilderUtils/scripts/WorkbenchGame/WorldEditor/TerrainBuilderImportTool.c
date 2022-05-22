@@ -47,6 +47,7 @@ class TerrainBuilderImportTool: WorldEditorTool
 				mappings.Insert(m.TB_name, m.AR_Prefab);
 			}
 		}
+		int importedAmount = 0;
 		
 
 		if (m_API.BeginEntityAction())
@@ -55,8 +56,6 @@ class TerrainBuilderImportTool: WorldEditorTool
 			for (int i = 0; true; ++i)
 			{
 				int numTokens = parser.ParseLine(i, tokens);
-				if(i % 1000 == 0)
-					Print("imported: "+ i);
 
 				if (numTokens == 0)
 					break;
@@ -98,6 +97,7 @@ class TerrainBuilderImportTool: WorldEditorTool
 					continue;
 				}
 				m_API.ModifyEntityKey(ent, "scale", scale.ToString());
+				importedAmount++;
 			}
 			m_API.EndEntityAction();
 		}
@@ -107,7 +107,7 @@ class TerrainBuilderImportTool: WorldEditorTool
 		{
 			Print(v, LogLevel.ERROR);
 		}
-		Print("Import done");
+		Print("Imported " + importedAmount + " Entities");
 	}
 	
 	[ButtonAttribute("Export objects")]
@@ -139,8 +139,9 @@ class TerrainBuilderImportTool: WorldEditorTool
 		
 		EditorEntityIterator iter(m_API);
 		int approximateCount = m_API.GetEditorEntityCount();
+		int exportedAmount = 0;
 		
-		Print("Exporting entities: " + approximateCount);
+		Print("Exporting entities: Total found " + approximateCount);
 		
 		WorldEditor we = Workbench.GetModule(WorldEditor);
 		WBProgressDialog progress = new WBProgressDialog("Exporting...", we);
@@ -193,6 +194,7 @@ class TerrainBuilderImportTool: WorldEditorTool
 				
 				pos[0] = pos[0] + easting;
 				pos[2] = pos[2] + northing;
+				exportedAmount++;
 	
 				// 		0 		1		2			3 		4 		 5 		6 		  7 	8 		 9 		10 		11 		12 	  13	14
 				// {'1_ruins',';','208209.546875',';','1733.600708',';','307.892517',';','0.000000',';','0.000000',';','1.000000',';','10.198336',';'}
@@ -208,7 +210,7 @@ class TerrainBuilderImportTool: WorldEditorTool
 		{
 			Print(v, LogLevel.ERROR);
 		}	
-		Print("Export done");
+		Print("Exported " + exportedAmount + " Entitys");
 		if (file)
 		{
 			file.CloseFile();
