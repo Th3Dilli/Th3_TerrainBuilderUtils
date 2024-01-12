@@ -198,7 +198,7 @@ class TerrainBuilderImportTool: WorldEditorTool
 	
 				// 		0 		1		2			3 		4 		 5 		6 		  7 	8 		 9 		10 		11 		12 	  13	14
 				// {'1_ruins',';','208209.546875',';','1733.600708',';','307.892517',';','0.000000',';','0.000000',';','1.000000',';','10.198336',';'}
-				file.FPrintln(string.Format(format, tbname, pos[0] , pos[2], angles[1], angles[0], angles[2], scale, pos[1]));
+				file.WriteLine(string.Format(format, tbname, pos[0] , pos[2], angles[1], angles[0], angles[2], scale, pos[1]));
 				//file.FPrintln(string.Format(format, tbname, pos[0].ToString(-1,6) , pos[2].ToString(-1,6), angles[1].ToString(-1,6), angles[0].ToString(-1,6), angles[2].ToString(-1,6), scale.ToString(-1,6), pos[1].ToString(-1,6)));
 			}
 			
@@ -213,7 +213,7 @@ class TerrainBuilderImportTool: WorldEditorTool
 		Print("Exported " + exportedAmount + " Entitys");
 		if (file)
 		{
-			file.CloseFile();
+			file.Close();
 		}
 	}
 	[ButtonAttribute("Import mapping")]
@@ -257,11 +257,11 @@ class TerrainBuilderImportTool: WorldEditorTool
 		}
 		foreach(TBToEnfusionMapping m : TBToEnfusion)
 		{
-			file.FPrintln("\""+m.TB_name + "\" \"" + m.AR_Prefab +"\"");
+			file.WriteLine("\""+m.TB_name + "\" \"" + m.AR_Prefab +"\"");
 		}
 		if (file)
 		{
-			file.CloseFile();
+			file.Close();
 		}
 		Print("Mapping Exported");
 	}

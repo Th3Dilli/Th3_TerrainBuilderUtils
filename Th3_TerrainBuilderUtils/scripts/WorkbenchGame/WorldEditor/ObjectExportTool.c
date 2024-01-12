@@ -65,7 +65,8 @@ class ObjectExportTool: WorldEditorTool
 				// quatZ
 				// quatRotation
 				// scale
-				file.FPrintln(string.Format(format, resourceName, pos[0] , pos[1], pos[2], quat[0], quat[1], quat[2], quat[3], scale));
+
+				file.WriteLine(string.Format(format, resourceName, pos[0] , pos[1], pos[2], quat[0], quat[1], quat[2], quat[3], scale));
 				//file.FPrintln(string.Format(format, resourceName, pos[0].ToString(-1,6) , pos[1].ToString(-1,6), pos[2].ToString(-1,6), quat[0].ToString(-1,6), quat[1].ToString(-1,6), quat[2].ToString(-1,6), quat[3].ToString(-1,6), scale.ToString(-1,6)));
 			}
 			
@@ -77,7 +78,7 @@ class ObjectExportTool: WorldEditorTool
 		Print("Export done");
 		if (file)
 		{
-			file.CloseFile();
+			file.Close();
 		}
 	}
 }
