@@ -4,7 +4,6 @@ This tool allows you to import your Terrain Builder object files (.txt) into Enf
 Using the same mapping table you can also export from Enfusion to Terrain Builder format.
 
 Those mapping tables can also be exportet to file and imported again.
-One bug atm is that the UI table will not update when importing the mapping table from file again. To still check whats on the mapping table there is a function to print it to console.
 
 WARNING
 This tool in its very early stage, to be sure not to break or loose your current progress make a copy of your map or create sub scene and test it there first.
@@ -31,8 +30,7 @@ GUID
     - AR Prfeb - choose a prefeb to replace a TB object
     - TB Name - this is the name of your object from the Terrain Builder Template Library
 6. Export your mapping file to be used later aswell
-    - You can later import the mappings again 
-    - NOTE: currently the UI for the mapping will not update when you import a mapping file so check with `Print Mapping` if the correct one is loaded -> it prints to the `Log Console`
+    - You can later import the mappings again
 7. Import your objects 
     - Objects will be imported into current active layer 
 

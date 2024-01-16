@@ -216,6 +216,7 @@ class TerrainBuilderImportTool: WorldEditorTool
 			file.Close();
 		}
 	}
+	
 	[ButtonAttribute("Import mapping")]
 	void ImportMapping()
 	{
@@ -242,6 +243,8 @@ class TerrainBuilderImportTool: WorldEditorTool
 			m.Init(tokens[0], tokens[1]);
 			TBToEnfusion.Insert(m);
 		}
+		
+		UpdatePropertyPanel();
 		Print("Mapping Imported");
 	}
 
