@@ -22,7 +22,7 @@ class TerrainBuilderImportTool: WorldEditorTool
 	[Attribute(desc: "Map Terrain Builder Template Library names to Enfusion Prefabs")]
 	protected ref array<ref TBToEnfusionMapping> TBToEnfusion;
 
-	ref map<string, string> mappings;
+	ref map<string, TBToEnfusionMapping> mappings;
 
 	[ButtonAttribute("Import objects")]
 	void ImportData()
@@ -35,7 +35,7 @@ class TerrainBuilderImportTool: WorldEditorTool
 		}
 		Print("Importing objects");
 
-		mappings = new map<string,string>;
+		mappings = new map<string,TBToEnfusionMapping>;
 		map<string,string> errors = new map<string,string>;
 
 		foreach(TBToEnfusionMapping m : TBToEnfusion)
@@ -44,7 +44,7 @@ class TerrainBuilderImportTool: WorldEditorTool
 			{
 				Print("Mapping for" + m.TB_name + " already exist.", LogLevel.WARNING);
 			} else {
-				mappings.Insert(m.TB_name, m.AR_Prefab);
+				mappings.Insert(m.TB_name, m);
 			}
 		}
 		int importedAmount = 0;
@@ -67,13 +67,13 @@ class TerrainBuilderImportTool: WorldEditorTool
 				}
 				// 		0 		1		2			3 		4 		 5 		6 		  7 	8 		 9 		10 		11 		12 	  13	14
 				// {'1_ruins',';','208209.546875',';','1733.600708',';','307.892517',';','0.000000',';','0.000000',';','1.000000',';','10.198336',';'}
-				string resourceHash = mappings.Get(tokens[0]);
+				TBToEnfusionMapping mapp = mappings.Get(tokens[0]);
 			
-				if(!resourceHash)
+				if(!mapp)
 				{
 					if(!errors.Contains(tokens[0]))
 					{
-						errors.Insert(tokens[0],"Could not find TBToEnfusion mapping for " + tokens[0] + " | Resource Path: "  + resourceHash);
+						errors.Insert(tokens[0],"Could not find TBToEnfusion mapping for " + tokens[0] + " | Resource Path: "  + mapp.AR_Prefab);
 					}
 					continue;
 				}
@@ -89,8 +89,13 @@ class TerrainBuilderImportTool: WorldEditorTool
 				
 				pos[0] = pos[0] - easting;
 				pos[2] = pos[2] - northing;
+				
+				pos[0] = pos[0] + mapp.Offset[0];
+				pos[1] = pos[1] + mapp.Offset[1];
+				pos[2] = pos[2] + mapp.Offset[2];
+				angles[1] = angles[1] + mapp.Angel;
 
-				IEntity ent = m_API.CreateEntity(resourceHash, "", m_API.GetCurrentEntityLayerId(), null, pos, angles);
+				IEntity ent = m_API.CreateEntity(mapp.AR_Prefab, "", m_API.GetCurrentEntityLayerId(), null, pos, angles);
 				if (ent == null)
 				{
 					Print("Line " + i + ": Entity could not be created", LogLevel.ERROR);
@@ -122,7 +127,7 @@ class TerrainBuilderImportTool: WorldEditorTool
 			return;
 		}
 		
-		mappings = new map<string,string>;
+		mappings = new map<string,TBToEnfusionMapping>;
 		map<string,string> errors = new map<string,string>;
 
 		foreach(TBToEnfusionMapping m : TBToEnfusion)
@@ -131,7 +136,7 @@ class TerrainBuilderImportTool: WorldEditorTool
 			{
 				Print("Mapping for" + m.TB_name + " already exist.", LogLevel.WARNING);
 			} else {
-				mappings.Insert(m.AR_Prefab,m.TB_name);
+				mappings.Insert(m.AR_Prefab,m);
 			}
 		}
 		
@@ -167,20 +172,20 @@ class TerrainBuilderImportTool: WorldEditorTool
 				continue;
 			}
 			
-			string tbname = mappings.Get(res);
+			TBToEnfusionMapping mapp = mappings.Get(res);
 			
-			if(res == "" || tbname == "")
+			if(res == "" || mapp.TB_name == "")
 			{
 				if(!errors.Contains(res))
 				{
-					errors.Insert(res, "Could not find TBToEnfusion mapping for " + res + " | Resource Path: "  + tbname);
+					errors.Insert(res, "Could not find TBToEnfusion mapping for " + res + " | Resource Path: "  + mapp.TB_name);
 				}
 				src = iter.GetNext();
 				progress.SetProgress(iter.GetCurrentIdx() / approximateCount);
 				continue;
 			}
 			
-			if(entity && tbname) {
+			if(entity && mapp.TB_name) {
 				float scale = entity.GetScale();
 				vector angles = entity.GetAngles();
 				vector mat[4];
@@ -198,7 +203,7 @@ class TerrainBuilderImportTool: WorldEditorTool
 	
 				// 		0 		1		2			3 		4 		 5 		6 		  7 	8 		 9 		10 		11 		12 	  13	14
 				// {'1_ruins',';','208209.546875',';','1733.600708',';','307.892517',';','0.000000',';','0.000000',';','1.000000',';','10.198336',';'}
-				file.WriteLine(string.Format(format, tbname, pos[0] , pos[2], angles[1], angles[0], angles[2], scale, pos[1]));
+				file.WriteLine(string.Format(format, mapp.TB_name, pos[0] , pos[2], angles[1], angles[0], angles[2], scale, pos[1]));
 				//file.FPrintln(string.Format(format, tbname, pos[0].ToString(-1,6) , pos[2].ToString(-1,6), angles[1].ToString(-1,6), angles[0].ToString(-1,6), angles[2].ToString(-1,6), scale.ToString(-1,6), pos[1].ToString(-1,6)));
 			}
 			
@@ -234,13 +239,13 @@ class TerrainBuilderImportTool: WorldEditorTool
 			int numTokens = parser.ParseLine(i, tokens);
 			if (numTokens == 0)
 					break;
-			if (numTokens != 2)
+			if (numTokens != 6)
 			{
 				Print("Line " + i + ": Invalid data format expected 2 tokens got " + numTokens, LogLevel.ERROR);
 				continue;
 			}
 			TBToEnfusionMapping m = new TBToEnfusionMapping();
-			m.Init(tokens[0], tokens[1]);
+			m.Init(tokens);
 			TBToEnfusion.Insert(m);
 		}
 		
@@ -252,6 +257,7 @@ class TerrainBuilderImportTool: WorldEditorTool
 	void ExportMapping()
 	{
 		string exportPath = MappingFile.GetPath();
+		string formatMapping  = "\"%1\" \"%2\" %3 %4 %5 %6 %7";
 		FileHandle file = FileIO.OpenFile(exportPath , FileMode.WRITE);
 		if (!file)
 		{
@@ -260,7 +266,7 @@ class TerrainBuilderImportTool: WorldEditorTool
 		}
 		foreach(TBToEnfusionMapping m : TBToEnfusion)
 		{
-			file.WriteLine("\""+m.TB_name + "\" \"" + m.AR_Prefab +"\"");
+			file.WriteLine(string.Format(formatMapping, m.TB_name, m.AR_Prefab, m.Offset[0], m.Offset[1] , m.Offset[2], m.Angel));
 		}
 		if (file)
 		{
@@ -282,16 +288,25 @@ class TerrainBuilderImportTool: WorldEditorTool
 }
 
 [BaseContainerProps()]
-class TBToEnfusionMapping{
+class TBToEnfusionMapping {
 	[Attribute(desc: "Arma Reforger Prefab",params:"et")]
 	ResourceName AR_Prefab;
 
 	[Attribute(desc: "Terrain Builder template string name")]
 	string TB_name;
 
-	void Init(string name = "", string res = "")
+	[Attribute(desc: "Offset")]
+	vector Offset;
+
+	[Attribute(desc: "Angel Y")]
+	int Angel;
+
+	void Init(array<string> tokens)
 	{
-		TB_name = name;
-		AR_Prefab = res;
+		TB_name = tokens[0];
+		AR_Prefab = tokens[1];
+		Offset[0] = tokens[2].ToFloat();
+		Offset[1] = tokens[3].ToFloat();
+		Offset[2] = tokens[4].ToFloat();
 	}
 }
