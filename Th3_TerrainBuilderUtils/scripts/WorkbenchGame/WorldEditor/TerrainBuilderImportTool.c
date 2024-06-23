@@ -95,7 +95,7 @@ class TerrainBuilderImportTool: WorldEditorTool
 				pos[2] = pos[2] + mapp.Offset[2];
 				angles[1] = angles[1] + mapp.Angel;
 
-				IEntity ent = m_API.CreateEntity(mapp.AR_Prefab, "", m_API.GetCurrentEntityLayerId(), null, pos, angles);
+				IEntitySource ent = m_API.CreateEntity(mapp.AR_Prefab, "", m_API.GetCurrentEntityLayerId(), null, pos, angles);
 				if (ent == null)
 				{
 					Print("Line " + i + ": Entity could not be created", LogLevel.ERROR);
@@ -308,5 +308,6 @@ class TBToEnfusionMapping {
 		Offset[0] = tokens[2].ToFloat();
 		Offset[1] = tokens[3].ToFloat();
 		Offset[2] = tokens[4].ToFloat();
+		Angel = tokens[5].ToFloat();
 	}
 }
